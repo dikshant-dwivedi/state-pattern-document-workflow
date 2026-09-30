@@ -24,29 +24,15 @@ public final class Document {
     }
 
     public void submit() {
-        if (status() != Status.DRAFT) {
-            throw new IllegalStateException("Only a draft can be submitted");
-        }
-        transitionTo(new InReviewState());
+        state.submit(this);
     }
 
     public void approve() {
-        if (status() != Status.IN_REVIEW) {
-            throw new IllegalStateException("Only a document in review can be approved");
-        }
-        transitionTo(new PublishedState());
+        state.approve(this);
     }
 
     public void reject() {
-        if (status() == Status.DRAFT) {
-            throw new IllegalStateException("A draft is not in review");
-        } else if (status() == Status.IN_REVIEW) {
-            transitionTo(new DraftState());
-        } else if (status() == Status.PUBLISHED) {
-            throw new IllegalStateException("A published document cannot be rejected");
-        } else if (status() == Status.ARCHIVED) {
-            throw new IllegalStateException("An archived document cannot be rejected");
-        }
+        state.reject(this);
     }
 
     public void archive() {

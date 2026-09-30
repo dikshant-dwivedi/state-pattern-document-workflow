@@ -6,4 +6,8 @@ final class DraftState implements DocumentState {
     @Override public void edit(Document document, String newContent) {
         document.replaceContent(newContent);
     }
+
+    @Override public void submit(Document document) {
+        document.transitionTo(new InReviewState());
+    }
 }

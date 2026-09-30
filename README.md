@@ -19,3 +19,7 @@ Two new branches repair the bug. The test passes again. The important observatio
 ## Step 05: delegate editing
 
 `Document` now holds a `DocumentState` object. `DraftState` implements the allowed `edit`; the interface's default method rejects editing in the other states. The other actions still use conditionals. This temporary mixed design lets us inspect one delegation before moving the rest.
+
+## Step 06: move review behavior
+
+`submit`, `approve`, and `reject` now delegate too. `DraftState` knows how to submit; `InReviewState` knows how to approve or reject. The interface rejects actions a state does not allow. Follow `Document.approve()` into `InReviewState.approve()` to see runtime polymorphism.
