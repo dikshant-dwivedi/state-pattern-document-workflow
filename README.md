@@ -1,6 +1,8 @@
 # Document publishing: learning the State pattern
 
-This repository grows a small Java workflow one commit at a time. Run `bash scripts/test.sh` at any commit. Java 17 is required; no build framework or downloads are needed. At the final commit, run `bash scripts/demo.sh` to watch every transition.
+For the full derivation, UML diagrams, trade-offs, examples, FAQ, and exercises, read [the post-read](POST_READ.md).
+
+This repository grows a small Java workflow one commit at a time. Run `bash scripts/test.sh` at any commit. Java 17 is required; the historical tags through step 07 also use `rg` in the test script. No build framework or downloads are needed. At the final commit, run `bash scripts/demo.sh` to watch every transition.
 
 At this starting point, a document moves from Draft to In Review to Published. The enum and two checks are simple and appropriate. We will add actions until the rules become harder to maintain, introduce a realistic mistake, and then extract state-specific behavior.
 
