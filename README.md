@@ -23,3 +23,7 @@ Two new branches repair the bug. The test passes again. The important observatio
 ## Step 06: move review behavior
 
 `submit`, `approve`, and `reject` now delegate too. `DraftState` knows how to submit; `InReviewState` knows how to approve or reject. The interface rejects actions a state does not allow. Follow `Document.approve()` into `InReviewState.approve()` to see runtime polymorphism.
+
+## Step 07: finish the refactor
+
+`PublishedState` handles archiving and `ArchivedState` handles restoring. Every public action in `Document` now delegates to its current state object. The behavior is unchanged from the repaired conditional version; only the organization changed.

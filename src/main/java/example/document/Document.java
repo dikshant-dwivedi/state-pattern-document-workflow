@@ -36,16 +36,10 @@ public final class Document {
     }
 
     public void archive() {
-        if (status() != Status.PUBLISHED) {
-            throw new IllegalStateException("Only a published document can be archived");
-        }
-        transitionTo(new ArchivedState());
+        state.archive(this);
     }
 
     public void restore() {
-        if (status() != Status.ARCHIVED) {
-            throw new IllegalStateException("Only an archived document can be restored");
-        }
-        transitionTo(new DraftState());
+        state.restore(this);
     }
 }
