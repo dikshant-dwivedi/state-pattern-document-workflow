@@ -3,3 +3,7 @@
 This repository grows a small Java workflow one commit at a time. Run `bash scripts/test.sh` at any commit. Java 17 and `rg` are required; no build framework or downloads are needed.
 
 At this starting point, a document moves from Draft to In Review to Published. The enum and two checks are simple and appropriate. We will add actions until the rules become harder to maintain, introduce a realistic mistake, and then extract state-specific behavior.
+
+## Step 02: more actions
+
+Editing is allowed only in Draft. A reviewer can reject a document and return it to Draft. Notice that each action now knows which states exist. The checks still work, but state-specific decisions are accumulating inside `Document`.
