@@ -5,7 +5,7 @@ public final class Document {
 
     private final String title;
     private String content;
-    private Status status = Status.DRAFT;
+    private DocumentState state = new DraftState();
 
     public Document(String title, String content) {
         this.title = title;
@@ -14,57 +14,52 @@ public final class Document {
 
     public String title() { return title; }
     public String content() { return content; }
-    public Status status() { return status; }
+    public Status status() { return state.status(); }
+
+    void transitionTo(DocumentState nextState) { state = nextState; }
+    void replaceContent(String newContent) { content = newContent; }
 
     public void edit(String newContent) {
-        if (status == Status.DRAFT) {
-            content = newContent;
-        } else if (status == Status.IN_REVIEW) {
-            throw new IllegalStateException("A document in review cannot be edited");
-        } else if (status == Status.PUBLISHED) {
-            throw new IllegalStateException("A published document cannot be edited");
-        } else if (status == Status.ARCHIVED) {
-            throw new IllegalStateException("An archived document cannot be edited");
-        }
+        state.edit(this, newContent);
     }
 
     public void submit() {
-        if (status != Status.DRAFT) {
+        if (status() != Status.DRAFT) {
             throw new IllegalStateException("Only a draft can be submitted");
         }
-        status = Status.IN_REVIEW;
+        transitionTo(new InReviewState());
     }
 
     public void approve() {
-        if (status != Status.IN_REVIEW) {
+        if (status() != Status.IN_REVIEW) {
             throw new IllegalStateException("Only a document in review can be approved");
         }
-        status = Status.PUBLISHED;
+        transitionTo(new PublishedState());
     }
 
     public void reject() {
-        if (status == Status.DRAFT) {
+        if (status() == Status.DRAFT) {
             throw new IllegalStateException("A draft is not in review");
-        } else if (status == Status.IN_REVIEW) {
-            status = Status.DRAFT;
-        } else if (status == Status.PUBLISHED) {
+        } else if (status() == Status.IN_REVIEW) {
+            transitionTo(new DraftState());
+        } else if (status() == Status.PUBLISHED) {
             throw new IllegalStateException("A published document cannot be rejected");
-        } else if (status == Status.ARCHIVED) {
+        } else if (status() == Status.ARCHIVED) {
             throw new IllegalStateException("An archived document cannot be rejected");
         }
     }
 
     public void archive() {
-        if (status != Status.PUBLISHED) {
+        if (status() != Status.PUBLISHED) {
             throw new IllegalStateException("Only a published document can be archived");
         }
-        status = Status.ARCHIVED;
+        transitionTo(new ArchivedState());
     }
 
     public void restore() {
-        if (status != Status.ARCHIVED) {
+        if (status() != Status.ARCHIVED) {
             throw new IllegalStateException("Only an archived document can be restored");
         }
-        status = Status.DRAFT;
+        transitionTo(new DraftState());
     }
 }

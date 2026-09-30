@@ -15,3 +15,7 @@ The new Archived state supports restoring to Draft. The test expects archived do
 ## Step 04: patch the conditionals
 
 Two new branches repair the bug. The test passes again. The important observation is that adding one state forced us to inspect several unrelated methods, because every method contains part of the workflow policy. This is the `before-state-pattern` version.
+
+## Step 05: delegate editing
+
+`Document` now holds a `DocumentState` object. `DraftState` implements the allowed `edit`; the interface's default method rejects editing in the other states. The other actions still use conditionals. This temporary mixed design lets us inspect one delegation before moving the rest.
