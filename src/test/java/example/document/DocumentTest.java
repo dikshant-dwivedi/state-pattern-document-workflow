@@ -17,6 +17,12 @@ public final class DocumentTest {
         expectInvalid(() -> document.edit("Too late"));
         expectInvalid(document::reject);
         expectInvalid(document::submit);
+        document.archive();
+        check(document.status() == Document.Status.ARCHIVED, "archive changes the state");
+        expectInvalid(() -> document.edit("An archived document must be read-only"));
+        expectInvalid(document::reject);
+        document.restore();
+        check(document.status() == Document.Status.DRAFT, "restore returns to draft");
         System.out.println("All checks passed");
     }
 

@@ -1,7 +1,7 @@
 package example.document;
 
 public final class Document {
-    public enum Status { DRAFT, IN_REVIEW, PUBLISHED }
+    public enum Status { DRAFT, IN_REVIEW, PUBLISHED, ARCHIVED }
 
     private final String title;
     private String content;
@@ -48,5 +48,19 @@ public final class Document {
         } else if (status == Status.PUBLISHED) {
             throw new IllegalStateException("A published document cannot be rejected");
         }
+    }
+
+    public void archive() {
+        if (status != Status.PUBLISHED) {
+            throw new IllegalStateException("Only a published document can be archived");
+        }
+        status = Status.ARCHIVED;
+    }
+
+    public void restore() {
+        if (status != Status.ARCHIVED) {
+            throw new IllegalStateException("Only an archived document can be restored");
+        }
+        status = Status.DRAFT;
     }
 }
