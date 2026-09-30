@@ -23,6 +23,8 @@ public final class Document {
             throw new IllegalStateException("A document in review cannot be edited");
         } else if (status == Status.PUBLISHED) {
             throw new IllegalStateException("A published document cannot be edited");
+        } else if (status == Status.ARCHIVED) {
+            throw new IllegalStateException("An archived document cannot be edited");
         }
     }
 
@@ -47,6 +49,8 @@ public final class Document {
             status = Status.DRAFT;
         } else if (status == Status.PUBLISHED) {
             throw new IllegalStateException("A published document cannot be rejected");
+        } else if (status == Status.ARCHIVED) {
+            throw new IllegalStateException("An archived document cannot be rejected");
         }
     }
 

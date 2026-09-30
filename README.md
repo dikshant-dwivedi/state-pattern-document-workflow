@@ -11,3 +11,7 @@ Editing is allowed only in Draft. A reviewer can reject a document and return it
 ## Step 03: a change exposes a bug
 
 The new Archived state supports restoring to Draft. The test expects archived documents to reject editing and rejection. This commit intentionally fails: `edit` and `reject` list only the three older states, so their missing branches silently return. Run the test and inspect those methods before continuing.
+
+## Step 04: patch the conditionals
+
+Two new branches repair the bug. The test passes again. The important observation is that adding one state forced us to inspect several unrelated methods, because every method contains part of the workflow policy. This is the `before-state-pattern` version.
