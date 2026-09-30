@@ -23,7 +23,43 @@ public final class DocumentTest {
         expectInvalid(document::reject);
         document.restore();
         check(document.status() == Document.Status.DRAFT, "restore returns to draft");
+        checkEveryInvalidActionIsRejected();
         System.out.println("All checks passed");
+    }
+
+    private static void checkEveryInvalidActionIsRejected() {
+        Document draft = new Document("draft", "text");
+        expectInvalid(draft::approve);
+        expectInvalid(draft::reject);
+        expectInvalid(draft::archive);
+        expectInvalid(draft::restore);
+
+        Document review = new Document("review", "text");
+        review.submit();
+        expectInvalid(() -> review.edit("changed"));
+        expectInvalid(review::submit);
+        expectInvalid(review::archive);
+        expectInvalid(review::restore);
+
+        Document published = new Document("published", "text");
+        published.submit();
+        published.approve();
+        expectInvalid(() -> published.edit("changed"));
+        expectInvalid(published::submit);
+        expectInvalid(published::approve);
+        expectInvalid(published::reject);
+        expectInvalid(published::restore);
+
+        Document archived = new Document("archived", "text");
+        archived.submit();
+        archived.approve();
+        archived.archive();
+        expectInvalid(() -> archived.edit("changed"));
+        expectInvalid(archived::submit);
+        expectInvalid(archived::approve);
+        expectInvalid(archived::reject);
+        expectInvalid(archived::archive);
+        check(archived.status() == Document.Status.ARCHIVED, "invalid actions never change state");
     }
 
     static void check(boolean condition, String description) {

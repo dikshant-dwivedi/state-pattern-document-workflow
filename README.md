@@ -1,8 +1,48 @@
 # Document publishing: learning the State pattern
 
-This repository grows a small Java workflow one commit at a time. Run `bash scripts/test.sh` at any commit. Java 17 and `rg` are required; no build framework or downloads are needed.
+This repository grows a small Java workflow one commit at a time. Run `bash scripts/test.sh` at any commit. Java 17 is required; no build framework or downloads are needed. At the final commit, run `bash scripts/demo.sh` to watch every transition.
 
 At this starting point, a document moves from Draft to In Review to Published. The enum and two checks are simple and appropriate. We will add actions until the rules become harder to maintain, introduce a realistic mistake, and then extract state-specific behavior.
+
+## The rule matrix
+
+| Current state | Allowed action | Next state |
+| --- | --- | --- |
+| Draft | edit | Draft |
+| Draft | submit | In Review |
+| In Review | approve | Published |
+| In Review | reject | Draft |
+| Published | archive | Archived |
+| Archived | restore | Draft |
+
+Every other action must throw `IllegalStateException` and leave the document unchanged.
+
+## Follow the commits
+
+```bash
+git log --oneline --reverse
+git switch --detach 01-small-workflow
+bash scripts/test.sh
+git switch --detach 03-archived-bug
+bash scripts/test.sh       # expected failure: archived edit silently succeeds
+git switch --detach before-state-pattern
+bash scripts/test.sh
+git switch main
+bash scripts/test.sh
+```
+
+The numbered tags mark teaching steps. `before-state-pattern` is the repaired conditional implementation; `after-state-pattern` is the complete refactor. Compare them with `git diff before-state-pattern after-state-pattern`.
+
+## What changed, and why
+
+**State pattern:** let an object change its behavior when its internal state changes by delegating behavior to a state object. Here `Document` is the *context*, `DocumentState` is the common interface, and `DraftState`, `InReviewState`, `PublishedState`, and `ArchivedState` are concrete states.
+
+- **Composition:** `Document` holds a `DocumentState` object.
+- **Polymorphism:** `state.approve(this)` calls the implementation for the current state at runtime.
+- **Single Responsibility Principle:** document content and each state's workflow policy have separate homes. The early `Document` accumulated both.
+- **Open/Closed Principle:** the early version required edits in several action methods when Archived arrived. The refactor localizes many changes, although a new state can still require changes to transitions and tests. State is not a promise of zero edits.
+
+The pattern trades conditional branches in one class for several small classes and more navigation between files. Its broad interface also exposes actions that most states cannot perform; default methods make these fail safely but can hide an accidentally omitted allowed action. Keep the conditional version when the workflow is small and stable.
 
 ## Step 02: more actions
 
